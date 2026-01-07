@@ -1447,188 +1447,518 @@ def show_quiz():
     st.markdown('<div class="main-header">❓ Quiz & Assessment</div>', unsafe_allow_html=True)
     st.markdown('<p class="developer-credit">Developed by Xavier Honablue, M.Ed. for Grosse Pointe South High School</p>', unsafe_allow_html=True)
     
-    st.markdown("## 📝 Lesson Assessment")
-    st.info("Complete this quiz to check your understanding of the immune system, autoimmune diseases, and drug development.")
+    st.markdown("## 📝 Lesson Assessment - Tutorial Mode")
+    st.info("""
+    **Tutorial Mode:** Answer each question to receive detailed feedback explaining why each option is correct or incorrect. 
+    This helps you understand the concepts deeply, not just memorize answers!
+    """)
     
-    with st.form("final_quiz"):
-        st.markdown("### Part 1: Immune System Basics")
-        
-        q1 = st.radio(
-            "**1.** What is the primary function of Helper T-cells (CD4+)? (MSS HS-LS1-2)",
-            ["A) Directly kill infected cells",
-             "B) Coordinate the immune response by releasing cytokines",
-             "C) Produce antibodies",
-             "D) Engulf and digest pathogens"],
-            key="quiz_q1"
-        )
-        
-        q2 = st.radio(
-            "**2.** In the JAK-STAT signaling pathway, what does TYK2 do when activated? (MSS HS-LS1-1)",
-            ["A) Destroys the cell membrane",
-             "B) Phosphorylates STAT proteins to transmit signals",
-             "C) Produces antibodies",
-             "D) Divides the cell"],
-            key="quiz_q2"
-        )
-        
-        st.markdown("### Part 2: Autoimmune Diseases")
-        
-        q3 = st.radio(
-            "**3.** What happens to skin cell turnover in psoriasis? (MSS HS-LS1-4)",
-            ["A) It slows down to 60 days",
-             "B) It speeds up to 3-4 days instead of 28-30 days",
-             "C) It stops completely",
-             "D) It remains normal"],
-            key="quiz_q3"
-        )
-        
-        q4 = st.radio(
-            "**4.** Why is TYK2 a good drug target for psoriasis? (MSS HS-LS1-1)",
-            ["A) TYK2 is only found in psoriasis patients",
-             "B) TYK2 transmits the IL-23 signal that drives inflammation",
-             "C) TYK2 directly causes skin cells to flake off",
-             "D) TYK2 produces the scales seen in psoriasis"],
-            key="quiz_q4"
-        )
-        
-        st.markdown("### Part 3: Drug Development")
-        
-        q5 = st.radio(
-            "**5.** What is the PRIMARY goal of a Phase 1 clinical trial? (MSS HS-LS1-6)",
-            ["A) Prove the drug works better than placebo",
-             "B) Test safety in healthy volunteers",
-             "C) Get FDA approval",
-             "D) Test on thousands of patients"],
-            key="quiz_q5"
-        )
-        
-        q6 = st.radio(
-            "**6.** How does envudeucitinib work to treat psoriasis? (MSS HS-LS1-1)",
-            ["A) It destroys all T-cells",
-             "B) It binds to TYK2's active site, blocking enzyme function",
-             "C) It increases IL-23 production",
-             "D) It makes skin cells divide faster"],
-            key="quiz_q6"
-        )
-        
-        st.markdown("### Part 4: Short Answer")
-        
-        q7 = st.text_area(
-            "**7.** Explain the connection between understanding protein structure (like TYK2) and designing targeted drug therapies. Use the concept of enzyme inhibition in your answer. (MSS HS-LS1-1)",
-            key="quiz_q7"
-        )
-        
-        q8 = st.text_area(
-            "**8.** Why might a biotech company's stock jump 95% after announcing positive Phase 3 trial results? Connect this to the drug development process and the value of scientific research. (MSS HS-LS1-6)",
-            key="quiz_q8"
-        )
-        
-        submitted = st.form_submit_button("Submit Quiz")
-        
-        if submitted:
-            score = 0
-            total = 6
-            
+    # Track quiz progress
+    if 'quiz_progress' not in st.session_state:
+        st.session_state.quiz_progress = {}
+    
+    st.markdown("---")
+    st.markdown("### Part 1: Immune System Basics")
+    
+    # Question 1
+    st.markdown("#### Question 1")
+    st.markdown("**What is the primary function of Helper T-cells (CD4+)?** *(MSS HS-LS1-2)*")
+    
+    q1 = st.radio(
+        "Select your answer:",
+        ["A) Directly kill infected cells",
+         "B) Coordinate the immune response by releasing cytokines",
+         "C) Produce antibodies",
+         "D) Engulf and digest pathogens"],
+        key="quiz_q1",
+        index=None
+    )
+    
+    if q1:
+        if "q1_answered" not in st.session_state.quiz_progress:
+            st.session_state.quiz_progress["q1_answered"] = q1
             if q1 == "B) Coordinate the immune response by releasing cytokines":
-                score += 1
-            if q2 == "B) Phosphorylates STAT proteins to transmit signals":
-                score += 1
-            if q3 == "B) It speeds up to 3-4 days instead of 28-30 days":
-                score += 1
-            if q4 == "B) TYK2 transmits the IL-23 signal that drives inflammation":
-                score += 1
-            if q5 == "B) Test safety in healthy volunteers":
-                score += 1
-            if q6 == "B) It binds to TYK2's active site, blocking enzyme function":
-                score += 1
-            
-            xp_earned = score * 10
-            
-            if "quiz_complete" not in st.session_state.completed_checks:
-                st.session_state.completed_checks.add("quiz_complete")
-                if "📝 Quiz Champion" not in st.session_state.achievements:
-                    st.session_state.achievements.append("📝 Quiz Champion")
-                st.session_state.xp_points += xp_earned + 25
-                
-                if score == total:
-                    if "🏆 Perfect Score" not in st.session_state.achievements:
-                        st.session_state.achievements.append("🏆 Perfect Score")
-                        st.session_state.xp_points += 50
-            
-            st.session_state.quiz_short_answers = {
-                "q7": q7,
-                "q8": q8,
-                "mc_score": score,
-                "mc_total": total
-            }
-            
-            st.markdown("---")
-            st.markdown("### 📊 Results")
-            
-            percentage = (score / total) * 100
-            
-            col1, col2, col3, col4 = st.columns(4)
-            
-            with col1:
-                st.metric("Score", f"{score}/{total}")
-            with col2:
-                st.metric("Percentage", f"{percentage:.0f}%")
-            with col3:
-                st.metric("XP Earned", f"+{xp_earned + 25}")
-            with col4:
-                if percentage >= 80:
-                    st.metric("Status", "Excellent! 🌟")
-                elif percentage >= 60:
-                    st.metric("Status", "Good Work! 👍")
-                else:
-                    st.metric("Status", "Keep Studying 📚")
-            
-            if percentage == 100:
-                st.balloons()
-                st.success("🎉 PERFECT SCORE! +50 Bonus XP! 🏆 Achievement: Perfect Score!")
-            elif percentage >= 80:
-                st.balloons()
-                st.success("🎉 Great job! 🎖️ Achievement: Quiz Champion!")
-            elif percentage >= 60:
-                st.info("👍 Good work! Review the sections where you missed questions.")
-            else:
-                st.warning("📚 Consider reviewing the lesson materials.")
-            
-            st.markdown("### Short Answer Feedback")
-            st.info("Click below to get personalized feedback on your short answers!")
-    
-    # AI Feedback for short answers
-    if st.session_state.quiz_short_answers:
-        answers = st.session_state.quiz_short_answers
+                award_xp(10, "quiz_q1_correct")
         
-        if answers.get('q7') or answers.get('q8'):
-            if st.button("🎓 Get Professor Xavier's Feedback on Short Answers"):
-                with st.spinner("Professor Xavier is reviewing your responses..."):
-                    # Simplified feedback for brevity
-                    st.markdown("### 💬 Professor Xavier's Feedback:")
-                    
-                    st.markdown("""
-**Question 7 - Structure-Function & Drug Design:**
-
-The key concept is that **protein structure determines function**. Scientists use X-ray crystallography to map the 3D structure of enzymes like TYK2. This reveals the **active site** - the pocket where the enzyme does its work.
-
-**Model Answer:** "Scientists mapped TYK2's 3D structure and identified the ATP-binding pocket (active site). Envudeucitinib was designed to fit perfectly into this pocket, competing with ATP for the binding site. When the drug occupies the active site, TYK2 cannot phosphorylate STAT proteins, blocking the inflammatory signal. This is competitive inhibition - the drug competes with the natural substrate."
-
-📚 **Study:** [CK-12: Enzymes](https://www.ck12.org/biology/enzymes/) | [Khan Academy: Enzyme Inhibition](https://www.khanacademy.org/science/biology/energy-and-enzymes/enzyme-regulation/v/competitive-inhibition)
-
----
-
-**Question 8 - Stock Surge & Drug Development:**
-
-The 95% stock jump reflects the **massive risk reduction** that Phase 3 success represents.
-
-**Model Answer:** "Phase 3 is the final and largest clinical trial - success means the drug works in thousands of patients with statistical significance. Since most drugs fail before this point (only ~10% of Phase 1 drugs reach market), positive Phase 3 results dramatically increase the probability of FDA approval and commercial success. With ~8 million psoriasis patients in the US alone and potential annual sales in the billions, investors see huge future revenue potential. The stock jump represents the market's valuation of that future success."
-
-📚 **Study:** [FDA: Drug Development Process](https://www.fda.gov/patients/learn-about-drug-and-device-approvals/drug-development-process)
-                    """)
-                    
-                    if award_xp(15, "quiz_feedback"):
-                        st.success("🎉 +15 XP for getting detailed feedback!")
+        st.markdown("##### 📚 Detailed Explanation:")
+        
+        if q1 == "B) Coordinate the immune response by releasing cytokines":
+            st.success("✅ **CORRECT!** +10 XP")
+        else:
+            st.error("❌ **Incorrect.** The correct answer is B.")
+        
+        st.markdown("""
+        <div class="info-box">
+        <h4>Why each option is correct or incorrect:</h4>
+        
+        **A) Directly kill infected cells** ❌
+        > This is the job of **Killer T-cells (CD8+)**, also called cytotoxic T-cells. They recognize infected cells displaying foreign antigens on MHC Class I molecules and release perforin and granzymes to destroy them. Helper T-cells do NOT directly kill cells.
+        
+        **B) Coordinate the immune response by releasing cytokines** ✅
+        > **CORRECT!** Helper T-cells (CD4+) are the "generals" of the immune system. When activated, they release signaling molecules called **cytokines** (like IL-2, IL-4, IFN-γ) that:
+        > - Activate Killer T-cells to destroy infected cells
+        > - Stimulate B-cells to produce antibodies
+        > - Recruit macrophages to sites of infection
+        > - This is why HIV (which destroys CD4+ cells) is so devastating - it removes the coordinators!
+        
+        **C) Produce antibodies** ❌
+        > This is the job of **B-cells** (specifically, plasma cells). B-cells are activated by Helper T-cells and then differentiate into plasma cells that secrete millions of antibodies. T-cells never produce antibodies.
+        
+        **D) Engulf and digest pathogens** ❌
+        > This is called **phagocytosis** and is performed by **macrophages** and **neutrophils**. These cells are part of the innate immune system and physically "eat" pathogens. T-cells don't do this.
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        **🧠 Memory Tip:** The "H" in Helper T-cell = **H**elps other cells do their jobs by sending chemical signals (cytokines). They coordinate but don't directly attack.
+        """)
+    
+    st.markdown("---")
+    
+    # Question 2
+    st.markdown("#### Question 2")
+    st.markdown("**In the JAK-STAT signaling pathway, what does TYK2 do when activated?** *(MSS HS-LS1-1)*")
+    
+    q2 = st.radio(
+        "Select your answer:",
+        ["A) Destroys the cell membrane",
+         "B) Phosphorylates STAT proteins to transmit signals",
+         "C) Produces antibodies",
+         "D) Divides the cell"],
+        key="quiz_q2",
+        index=None
+    )
+    
+    if q2:
+        if "q2_answered" not in st.session_state.quiz_progress:
+            st.session_state.quiz_progress["q2_answered"] = q2
+            if q2 == "B) Phosphorylates STAT proteins to transmit signals":
+                award_xp(10, "quiz_q2_correct")
+        
+        st.markdown("##### 📚 Detailed Explanation:")
+        
+        if q2 == "B) Phosphorylates STAT proteins to transmit signals":
+            st.success("✅ **CORRECT!** +10 XP")
+        else:
+            st.error("❌ **Incorrect.** The correct answer is B.")
+        
+        st.markdown("""
+        <div class="info-box">
+        <h4>Why each option is correct or incorrect:</h4>
+        
+        **A) Destroys the cell membrane** ❌
+        > TYK2 has nothing to do with destroying membranes. That's what certain immune cells do to pathogens (using proteins like perforin). TYK2 is an **enzyme inside the cell** that transmits signals - it doesn't destroy anything.
+        
+        **B) Phosphorylates STAT proteins to transmit signals** ✅
+        > **CORRECT!** TYK2 is a **kinase** enzyme (Tyrosine Kinase 2). Kinases add phosphate groups to other proteins - this is called **phosphorylation**. Here's the pathway:
+        > 1. Cytokine (like IL-23) binds to receptor on cell surface
+        > 2. TYK2 is activated and adds phosphate groups to **STAT proteins**
+        > 3. Phosphorylated STATs enter the nucleus
+        > 4. STATs turn on genes that cause inflammation
+        > This is why blocking TYK2 with envudeucitinib stops the inflammatory signal!
+        
+        **C) Produces antibodies** ❌
+        > Antibodies are proteins made by **B-cells/plasma cells** in the ribosomes and endoplasmic reticulum. TYK2 is a signaling enzyme - it doesn't synthesize proteins, it modifies them by adding phosphate groups.
+        
+        **D) Divides the cell** ❌
+        > Cell division is controlled by a different set of proteins (cyclins, CDKs) and involves DNA replication and mitosis. While TYK2 signaling CAN lead to cell proliferation (by turning on certain genes), TYK2 itself doesn't directly cause cell division.
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        **🧠 Memory Tip:** TYK2 is a **kinase** - kinases are "phosphate adders." The "-ase" suffix means enzyme, and kinases specifically transfer phosphate groups. Think of TYK2 as a "molecular relay runner" passing the signal baton (phosphate) to STAT proteins.
+        """)
+    
+    st.markdown("---")
+    st.markdown("### Part 2: Autoimmune Diseases")
+    
+    # Question 3
+    st.markdown("#### Question 3")
+    st.markdown("**What happens to skin cell turnover in psoriasis?** *(MSS HS-LS1-4)*")
+    
+    q3 = st.radio(
+        "Select your answer:",
+        ["A) It slows down to 60 days",
+         "B) It speeds up to 3-4 days instead of 28-30 days",
+         "C) It stops completely",
+         "D) It remains normal"],
+        key="quiz_q3",
+        index=None
+    )
+    
+    if q3:
+        if "q3_answered" not in st.session_state.quiz_progress:
+            st.session_state.quiz_progress["q3_answered"] = q3
+            if q3 == "B) It speeds up to 3-4 days instead of 28-30 days":
+                award_xp(10, "quiz_q3_correct")
+        
+        st.markdown("##### 📚 Detailed Explanation:")
+        
+        if q3 == "B) It speeds up to 3-4 days instead of 28-30 days":
+            st.success("✅ **CORRECT!** +10 XP")
+        else:
+            st.error("❌ **Incorrect.** The correct answer is B.")
+        
+        st.markdown("""
+        <div class="info-box">
+        <h4>Why each option is correct or incorrect:</h4>
+        
+        **A) It slows down to 60 days** ❌
+        > This is the opposite of what happens! If cell turnover slowed down, you'd have thin, fragile skin - not the thick, scaly plaques seen in psoriasis. Slowed turnover occurs in some other conditions (like with aging) but NOT psoriasis.
+        
+        **B) It speeds up to 3-4 days instead of 28-30 days** ✅
+        > **CORRECT!** This is the hallmark of psoriasis:
+        > - **Normal skin:** Cells take 28-30 days to mature, move to surface, and shed
+        > - **Psoriasis skin:** Inflammatory signals (IL-17, IL-23) tell keratinocytes to divide ~10x faster
+        > - Cells reach the surface in just 3-4 days
+        > - Cells don't have time to mature properly
+        > - Immature cells pile up → thick, silvery scales (plaques)
+        > This rapid turnover is driven by the overactive immune response that TYK2 inhibitors target!
+        
+        **C) It stops completely** ❌
+        > If skin cell turnover stopped, you'd have a serious medical emergency - your skin couldn't repair itself or shed dead cells. This doesn't happen in psoriasis. The opposite problem occurs - TOO MUCH turnover.
+        
+        **D) It remains normal** ❌
+        > If turnover were normal, there wouldn't be visible symptoms! The accelerated turnover IS the disease process. Normal turnover = healthy skin; abnormal (fast) turnover = psoriasis plaques.
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        **🧠 Memory Tip:** Psoriasis = **P**iling up skin cells = **P**roliferation gone wild. Think of it like a factory conveyor belt running 10x too fast - products (cells) pile up at the end because they can't be processed fast enough.
+        """)
+    
+    st.markdown("---")
+    
+    # Question 4
+    st.markdown("#### Question 4")
+    st.markdown("**Why is TYK2 a good drug target for psoriasis?** *(MSS HS-LS1-1)*")
+    
+    q4 = st.radio(
+        "Select your answer:",
+        ["A) TYK2 is only found in psoriasis patients",
+         "B) TYK2 transmits the IL-23 signal that drives inflammation",
+         "C) TYK2 directly causes skin cells to flake off",
+         "D) TYK2 produces the scales seen in psoriasis"],
+        key="quiz_q4",
+        index=None
+    )
+    
+    if q4:
+        if "q4_answered" not in st.session_state.quiz_progress:
+            st.session_state.quiz_progress["q4_answered"] = q4
+            if q4 == "B) TYK2 transmits the IL-23 signal that drives inflammation":
+                award_xp(10, "quiz_q4_correct")
+        
+        st.markdown("##### 📚 Detailed Explanation:")
+        
+        if q4 == "B) TYK2 transmits the IL-23 signal that drives inflammation":
+            st.success("✅ **CORRECT!** +10 XP")
+        else:
+            st.error("❌ **Incorrect.** The correct answer is B.")
+        
+        st.markdown("""
+        <div class="info-box">
+        <h4>Why each option is correct or incorrect:</h4>
+        
+        **A) TYK2 is only found in psoriasis patients** ❌
+        > **Everyone has TYK2** - it's a normal enzyme in all humans! It's part of normal immune signaling. In psoriasis, TYK2 isn't abnormal itself; rather, it's being **overactivated** due to excess IL-23 cytokine. The drug works by reducing this overactivity, not by targeting something unique to patients.
+        
+        **B) TYK2 transmits the IL-23 signal that drives inflammation** ✅
+        > **CORRECT!** This is the key insight:
+        > - IL-23 is a cytokine overproduced in psoriasis
+        > - IL-23 binds to receptors on immune cells
+        > - TYK2 is activated and transmits the signal inside the cell
+        > - This leads to activation of Th17 cells and inflammation
+        > - **Blocking TYK2 = cutting the signal transmission line**
+        > - The message (IL-23) arrives but can't be delivered to the nucleus
+        > This is structure-function in action: the drug fits into TYK2's active site and blocks its function!
+        
+        **C) TYK2 directly causes skin cells to flake off** ❌
+        > TYK2 doesn't touch skin cells directly. TYK2 is inside **immune cells**, not skin cells (keratinocytes). TYK2 transmits signals that eventually LEAD to skin problems, but it doesn't physically cause flaking. The flaking is a downstream consequence of the inflammatory cascade.
+        
+        **D) TYK2 produces the scales seen in psoriasis** ❌
+        > Scales are made of **keratin** - a structural protein produced by keratinocytes (skin cells). TYK2 is a signaling enzyme in immune cells; it doesn't produce any structural proteins. The scales are an indirect result of the immune attack, not something TYK2 makes.
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        **🧠 Memory Tip:** TYK2 is like a **telephone operator** - it receives the call (IL-23) and connects it to the right department (STAT proteins → nucleus). The drug envudeucitinib is like cutting the phone line - the call comes in but can't be connected!
+        """)
+    
+    st.markdown("---")
+    st.markdown("### Part 3: Drug Development")
+    
+    # Question 5
+    st.markdown("#### Question 5")
+    st.markdown("**What is the PRIMARY goal of a Phase 1 clinical trial?** *(MSS HS-LS1-6)*")
+    
+    q5 = st.radio(
+        "Select your answer:",
+        ["A) Prove the drug works better than placebo",
+         "B) Test safety in healthy volunteers",
+         "C) Get FDA approval",
+         "D) Test on thousands of patients"],
+        key="quiz_q5",
+        index=None
+    )
+    
+    if q5:
+        if "q5_answered" not in st.session_state.quiz_progress:
+            st.session_state.quiz_progress["q5_answered"] = q5
+            if q5 == "B) Test safety in healthy volunteers":
+                award_xp(10, "quiz_q5_correct")
+        
+        st.markdown("##### 📚 Detailed Explanation:")
+        
+        if q5 == "B) Test safety in healthy volunteers":
+            st.success("✅ **CORRECT!** +10 XP")
+        else:
+            st.error("❌ **Incorrect.** The correct answer is B.")
+        
+        st.markdown("""
+        <div class="info-box">
+        <h4>Why each option is correct or incorrect:</h4>
+        
+        **A) Prove the drug works better than placebo** ❌
+        > This is the goal of **Phase 3 trials**, not Phase 1. In Phase 1, we don't even know if the drug is safe yet! You can't ethically test efficacy until you've established basic safety. Phase 2 begins to look at efficacy; Phase 3 proves it definitively with placebo comparisons.
+        
+        **B) Test safety in healthy volunteers** ✅
+        > **CORRECT!** Phase 1 = "Safety First"
+        > - Uses 20-100 healthy volunteers (not patients)
+        > - Starts with very LOW doses
+        > - Gradually increases to find maximum tolerated dose
+        > - Monitors for side effects, how body processes the drug
+        > - ~70% of drugs pass Phase 1
+        > Only after proving the drug doesn't cause serious harm can it be tested in actual patients (Phase 2)!
+        
+        **C) Get FDA approval** ❌
+        > FDA approval comes **after Phase 3** is complete, not during Phase 1. The approval process requires:
+        > - Successful Phase 1, 2, AND 3 trials
+        > - Submission of New Drug Application (NDA)
+        > - FDA review (6-10 months)
+        > Phase 1 is just the first step of many!
+        
+        **D) Test on thousands of patients** ❌
+        > Large-scale testing (1,000-5,000+ patients) happens in **Phase 3**, not Phase 1. Phase 1 uses only 20-100 volunteers because we're still determining basic safety. You don't expose thousands of people until you know the drug is reasonably safe.
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        **🧠 Memory Tip:** Think of clinical trials like learning to drive:
+        - **Phase 1** = Empty parking lot (safe environment, small scale, learn basics)
+        - **Phase 2** = Residential streets (patients, finding the right "dose")
+        - **Phase 3** = Highway driving (large scale, prove you can really do it)
+        - **FDA Approval** = Getting your license!
+        """)
+    
+    st.markdown("---")
+    
+    # Question 6
+    st.markdown("#### Question 6")
+    st.markdown("**How does envudeucitinib work to treat psoriasis?** *(MSS HS-LS1-1)*")
+    
+    q6 = st.radio(
+        "Select your answer:",
+        ["A) It destroys all T-cells",
+         "B) It binds to TYK2's active site, blocking enzyme function",
+         "C) It increases IL-23 production",
+         "D) It makes skin cells divide faster"],
+        key="quiz_q6",
+        index=None
+    )
+    
+    if q6:
+        if "q6_answered" not in st.session_state.quiz_progress:
+            st.session_state.quiz_progress["q6_answered"] = q6
+            if q6 == "B) It binds to TYK2's active site, blocking enzyme function":
+                award_xp(10, "quiz_q6_correct")
+        
+        st.markdown("##### 📚 Detailed Explanation:")
+        
+        if q6 == "B) It binds to TYK2's active site, blocking enzyme function":
+            st.success("✅ **CORRECT!** +10 XP")
+        else:
+            st.error("❌ **Incorrect.** The correct answer is B.")
+        
+        st.markdown("""
+        <div class="info-box">
+        <h4>Why each option is correct or incorrect:</h4>
+        
+        **A) It destroys all T-cells** ❌
+        > This would be extremely dangerous! Destroying all T-cells would leave patients with no immune defense against infections (like what happens in AIDS). Envudeucitinib is much more targeted - it only blocks ONE signaling pathway (TYK2) while leaving most immune function intact. This selectivity is what makes it safer than older treatments.
+        
+        **B) It binds to TYK2's active site, blocking enzyme function** ✅
+        > **CORRECT!** This is called **competitive inhibition**:
+        > - Scientists mapped TYK2's 3D structure using X-ray crystallography
+        > - They identified the **active site** (where ATP normally binds)
+        > - Envudeucitinib was designed to fit perfectly into this pocket
+        > - When the drug occupies the active site, ATP can't bind
+        > - Without ATP, TYK2 can't add phosphate groups to STAT proteins
+        > - No phosphorylation = signal blocked = less inflammation
+        > This is **structure-function** in action - the drug's shape determines its function!
+        
+        **C) It increases IL-23 production** ❌
+        > This is **backwards**! IL-23 is the PROBLEM in psoriasis - it's the cytokine driving inflammation. Increasing IL-23 would make psoriasis WORSE, not better. The drug blocks the IL-23 signal by inhibiting TYK2, which is downstream of IL-23.
+        
+        **D) It makes skin cells divide faster** ❌
+        > Again, **backwards**! Rapid skin cell division IS the problem in psoriasis (3-4 days vs normal 28-30 days). Making cells divide faster would worsen the disease. By blocking TYK2 and reducing inflammation, the drug actually helps skin cells return to NORMAL division rates.
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        **🧠 Memory Tip:** Think of TYK2's active site as a **lock** and envudeucitinib as a **fake key** that fits perfectly but doesn't turn. When the fake key is in the lock, the real key (ATP) can't get in, so the door (signal pathway) stays closed!
+        """)
+    
+    # Calculate and display score
+    st.markdown("---")
+    st.markdown("### 📊 Your Progress")
+    
+    correct_answers = {
+        "quiz_q1_correct", "quiz_q2_correct", "quiz_q3_correct",
+        "quiz_q4_correct", "quiz_q5_correct", "quiz_q6_correct"
+    }
+    
+    answered = len([k for k in st.session_state.quiz_progress.keys() if k.endswith("_answered")])
+    correct = len(correct_answers.intersection(st.session_state.completed_checks))
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Questions Answered", f"{answered}/6")
+    with col2:
+        st.metric("Correct Answers", f"{correct}/6")
+    with col3:
+        if answered > 0:
+            percentage = (correct / answered) * 100
+            st.metric("Accuracy", f"{percentage:.0f}%")
+        else:
+            st.metric("Accuracy", "N/A")
+    
+    if answered == 6:
+        if correct == 6:
+            if "🏆 Perfect Score" not in st.session_state.achievements:
+                st.session_state.achievements.append("🏆 Perfect Score")
+                award_xp(50, "perfect_score_bonus")
+                st.balloons()
+            st.success("🎉 **PERFECT SCORE!** You've mastered the immune system and drug development concepts! +50 Bonus XP")
+        elif correct >= 4:
+            if "📝 Quiz Champion" not in st.session_state.achievements:
+                st.session_state.achievements.append("📝 Quiz Champion")
+                award_xp(25, "quiz_champion_bonus")
+            st.success(f"🎉 **Great job!** You got {correct}/6 correct! 🎖️ Achievement: Quiz Champion!")
+        else:
+            st.info(f"📚 You got {correct}/6 correct. Review the explanations above to strengthen your understanding!")
+    
+    # Short Answer Section
+    st.markdown("---")
+    st.markdown("### Part 4: Short Answer")
+    st.info("Complete the short answer questions below, then click 'Get Feedback' for detailed explanations.")
+    
+    q7 = st.text_area(
+        "**7.** Explain the connection between understanding protein structure (like TYK2) and designing targeted drug therapies. Use the concept of enzyme inhibition in your answer. *(MSS HS-LS1-1)*",
+        key="quiz_q7",
+        height=150
+    )
+    
+    q8 = st.text_area(
+        "**8.** Why might a biotech company's stock jump 95% after announcing positive Phase 3 trial results? Connect this to the drug development process and the value of scientific research. *(MSS HS-LS1-6)*",
+        key="quiz_q8",
+        height=150
+    )
+    
+    if st.button("🎓 Get Feedback on Short Answers"):
+        if q7 or q8:
+            st.session_state.quiz_short_answers = {"q7": q7, "q8": q8}
+            
+            with st.spinner("Professor Xavier is reviewing your responses..."):
+                st.markdown("### 💬 Professor Xavier's Feedback:")
+                
+                # Q7 Feedback
+                st.markdown("#### Question 7 - Structure-Function & Drug Design")
+                
+                if q7 and len(q7) > 30:
+                    st.success("✅ You provided a response! Let's see how it compares to the model answer.")
+                else:
+                    st.warning("⚠️ Your response was brief. Here's a detailed explanation:")
+                
+                st.markdown("""
+                <div class="success-box">
+                <h4>Model Answer:</h4>
+                
+                **The Key Concept: Structure Determines Function**
+                
+                Scientists use techniques like **X-ray crystallography** and **cryo-electron microscopy** to map the 3D structure of proteins like TYK2. This reveals:
+                
+                1. **The Active Site:** A specific pocket where the enzyme does its work (for TYK2, this is where ATP binds to provide phosphate groups)
+                
+                2. **Drug Design:** Once scientists know the active site's exact shape, they can design molecules that:
+                   - Fit perfectly into the pocket (like a key in a lock)
+                   - Compete with the natural substrate (ATP)
+                   - Block the enzyme from functioning
+                
+                3. **Enzyme Inhibition:** Envudeucitinib is a **competitive inhibitor** - it competes with ATP for the active site. When the drug occupies the site, TYK2 cannot phosphorylate STAT proteins, blocking the inflammatory signal.
+                
+                **The Bottom Line:** Understanding the 3D structure of a protein allows scientists to design drugs that target it specifically, with fewer off-target effects. This is why structural biology is so valuable for drug development!
+                </div>
+                """, unsafe_allow_html=True)
+                
+                st.markdown("""
+                **📚 Study Resources:**
+                - [CK-12: Enzymes and Active Sites](https://www.ck12.org/biology/enzymes/)
+                - [Khan Academy: Enzyme Inhibition](https://www.khanacademy.org/science/biology/energy-and-enzymes/enzyme-regulation/v/competitive-inhibition)
+                """)
+                
+                st.markdown("---")
+                
+                # Q8 Feedback
+                st.markdown("#### Question 8 - Stock Surge & Drug Development")
+                
+                if q8 and len(q8) > 30:
+                    st.success("✅ You provided a response! Let's see how it compares to the model answer.")
+                else:
+                    st.warning("⚠️ Your response was brief. Here's a detailed explanation:")
+                
+                st.markdown("""
+                <div class="success-box">
+                <h4>Model Answer:</h4>
+                
+                **Why a 95% Stock Jump Makes Sense:**
+                
+                1. **Phase 3 is the Final Hurdle:**
+                   - Phase 3 trials test drugs in 1,000-5,000 patients
+                   - They use randomized, placebo-controlled design
+                   - Success means statistical PROOF that the drug works
+                   - Only ~25-30% of drugs pass Phase 3
+                
+                2. **Risk Reduction:**
+                   - Before Phase 3 success: High uncertainty about approval
+                   - After Phase 3 success: ~90%+ chance of FDA approval
+                   - Investors price in this dramatically reduced risk
+                
+                3. **Market Potential:**
+                   - ~8 million Americans have psoriasis
+                   - Global psoriasis drug market: ~$20+ billion/year
+                   - A successful new drug could capture billions in sales
+                
+                4. **Value of Scientific Research:**
+                   - Years of basic research (understanding IL-23/TYK2 pathway)
+                   - Millions in R&D investment
+                   - All validated by Phase 3 success
+                   - Shows that understanding biology LEADS to real treatments
+                
+                **The Bottom Line:** The stock surge reflects the market recognizing that scientific hypothesis → rigorous testing → successful results = future revenue and patient benefit!
+                </div>
+                """, unsafe_allow_html=True)
+                
+                st.markdown("""
+                **📚 Study Resources:**
+                - [FDA: Drug Development Process](https://www.fda.gov/patients/learn-about-drug-and-device-approvals/drug-development-process)
+                - [NIH: Understanding Clinical Trials](https://www.nih.gov/health-information/nih-clinical-research-trials-you/basics)
+                """)
+                
+                if award_xp(20, "short_answer_feedback"):
+                    st.success("🎉 +20 XP for completing the short answer section!")
+        else:
+            st.warning("Please write at least one response before requesting feedback.")
 
 def show_resources():
     st.markdown('<div class="main-header">📚 Resources</div>', unsafe_allow_html=True)
