@@ -2011,8 +2011,7 @@ def show_resources():
         
         st.markdown("### 🏥 Michigan Research")
         st.markdown("""
-        - [U-M Autoimmunity Center](https://www.med.umich.edu/intmed/rheumatology/)
-        - [Wayne State Immunology](https://immunology.med.wayne.edu/)
+        - [U-M Autoimmunity Center](https://medschool.umich.edu/departments/internal-medicine/divisions/rheumatology)
         - [MSU College of Human Medicine](https://humanmedicine.msu.edu/)
         """)
 
